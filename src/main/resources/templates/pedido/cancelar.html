@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Cancelar Pedido</title>
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+</head>
+<body class="bg-light">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+    <div class="container">
+        <a class="navbar-brand" href="#">Sistema de Vendas</a>
+        <div class="collapse navbar-collapse">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item"><a class="nav-link" th:href="@{/clientes}">Clientes</a></li>
+                <li class="nav-item"><a class="nav-link" th:href="@{/produtos}">Produtos</a></li>
+                <li class="nav-item"><a class="nav-link active" th:href="@{/pedidos}">Pedidos</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container mb-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm border-danger mb-3">
+                <div class="card-header bg-danger text-white py-3">
+                    <h4 class="mb-0">Confirmar Cancelamento</h4>
+                </div>
+                <div class="card-body">
+                    <p class="lead">Tem certeza que deseja cancelar o pedido <strong>#<span th:text="${pedido.id}"></span></strong>?</p>
+                    
+                    <ul class="list-group mb-4">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Cliente
+                            <span class="fw-medium" th:text="${pedido.cliente.nomeCompleto}"></span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Data do Pedido
+                            <span class="fw-medium" th:text="${#temporals.format(pedido.dataPedido, 'dd/MM/yyyy HH:mm')}"></span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Valor Total
+                            <span class="fw-medium text-primary" th:text="${#numbers.formatCurrency(pedido.valorTotal)}"></span>
+                        </li>
+                    </ul>
+
+                    <div class="alert alert-warning">
+                        <strong>Atenção:</strong> Esta ação não poderá ser desfeita.
+                    </div>
+
+                    <form th:action="@{/pedidos/cancelar/{id}(id=${pedido.id})}" method="post">
+                        <div class="d-flex justify-content-end">
+                            <a th:href="@{/pedidos}" class="btn btn-outline-secondary me-2">Voltar</a>
+                            <button type="submit" class="btn btn-danger">Sim, Cancelar Pedido</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>

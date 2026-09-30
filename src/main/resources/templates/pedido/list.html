@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Listagem de Pedidos</title>
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+</head>
+<body class="bg-light">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+    <div class="container">
+        <a class="navbar-brand" href="#">Sistema de Vendas</a>
+        <div class="collapse navbar-collapse">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item"><a class="nav-link" th:href="@{/clientes}">Clientes</a></li>
+                <li class="nav-item"><a class="nav-link" th:href="@{/produtos}">Produtos</a></li>
+                <li class="nav-item"><a class="nav-link active" th:href="@{/pedidos}">Pedidos</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container mb-5">
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
+            <h4 class="mb-0 text-dark">Pedidos</h4>
+            <a class="btn btn-primary" th:href="@{/pedidos/novo}">+ Novo Pedido</a>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover table-striped mb-0 align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="ps-3">ID</th>
+                            <th>Data</th>
+                            <th>Cliente</th>
+                            <th>Valor Total</th>
+                            <th>Status</th>
+                            <th class="text-center pe-3">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="pedido : ${pedidos}">
+                            <td class="ps-3 fw-medium" th:text="${pedido.id}"></td>
+                            <td th:text="${#temporals.format(pedido.dataPedido, 'dd/MM/yyyy HH:mm')}"></td>
+                            <td th:text="${pedido.cliente.nomeCompleto}"></td>
+                            <td th:text="${#numbers.formatCurrency(pedido.valorTotal)}"></td>
+                            <td>
+                                <span class="badge" th:classappend="${pedido.status.name() == 'ATIVO' ? 'bg-success' : (pedido.status.name() == 'CANCELADO' ? 'bg-danger' : 'bg-secondary')}" th:text="${pedido.status}"></span>
+                            </td>
+                            <td class="text-center pe-3">
+                                <a th:if="${pedido.status.name() == 'ATIVO'}" class="btn btn-sm btn-outline-secondary me-1" th:href="@{/pedidos/edit/{id}(id=${pedido.id})}">Editar</a>
+                                <a th:if="${pedido.status.name() != 'ATIVO'}" class="btn btn-sm btn-outline-info me-1" th:href="@{/pedidos/edit/{id}(id=${pedido.id})}">Visualizar</a>
+                                <a th:if="${pedido.status.name() == 'ATIVO'}" class="btn btn-sm btn-outline-danger" th:href="@{/pedidos/cancelar/{id}(id=${pedido.id})}">Cancelar</a>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(pedidos)}">
+                            <td colspan="6" class="text-center py-5 text-muted">Nenhum pedido encontrado.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>
