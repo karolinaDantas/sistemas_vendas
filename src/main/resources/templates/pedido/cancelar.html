@@ -1,64 +1,68 @@
 <!DOCTYPE html>
-<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <title>Cancelar Pedido</title>
-    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 </head>
-<body class="bg-light">
+<body>
+
+<!-- Barra de navegação com controlo visual de perfis (ADMIN / PADRAO) -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
     <div class="container">
-        <a class="navbar-brand" href="#">Sistema de Vendas</a>
-        <div class="collapse navbar-collapse">
-            <ul class="navbar-nav ms-auto">
-                <li class="nav-item"><a class="nav-link" th:href="@{/clientes}">Clientes</a></li>
-                <li class="nav-item"><a class="nav-link" th:href="@{/produtos}">Produtos</a></li>
-                <li class="nav-item"><a class="nav-link active" th:href="@{/pedidos}">Pedidos</a></li>
+        <a class="navbar-brand" th:href="@{/pedidos}">Sistema Vendas</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <!-- Apenas ADMIN gere clientes -->
+                <li class="nav-item" sec:authorize="hasRole('ADMIN')">
+                    <a class="nav-link" th:href="@{/clientes}">Clientes</a>
+                </li>
+                <!-- Apenas ADMIN gere produtos -->
+                <li class="nav-item" sec:authorize="hasRole('ADMIN')">
+                    <a class="nav-link" th:href="@{/produtos}">Produtos</a>
+                </li>
+                <!-- ADMIN e PADRAO gerem pedidos -->
+                <li class="nav-item" sec:authorize="hasAnyRole('ADMIN', 'PADRAO')">
+                    <a class="nav-link active" th:href="@{/pedidos}">Pedidos</a>
+                </li>
+            </ul>
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link text-danger fw-bold" th:href="@{/logout}">
+                        <i class="bi bi-box-arrow-right"></i> Sair
+                    </a>
+                </li>
             </ul>
         </div>
     </div>
 </nav>
 
-<div class="container mb-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card shadow-sm border-danger mb-3">
-                <div class="card-header bg-danger text-white py-3">
-                    <h4 class="mb-0">Confirmar Cancelamento</h4>
-                </div>
-                <div class="card-body">
-                    <p class="lead">Tem certeza que deseja cancelar o pedido <strong>#<span th:text="${pedido.id}"></span></strong>?</p>
-                    
-                    <ul class="list-group mb-4">
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            Cliente
-                            <span class="fw-medium" th:text="${pedido.cliente.nomeCompleto}"></span>
-                        </li>
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            Data do Pedido
-                            <span class="fw-medium" th:text="${#temporals.format(pedido.dataPedido, 'dd/MM/yyyy HH:mm')}"></span>
-                        </li>
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            Valor Total
-                            <span class="fw-medium text-primary" th:text="${#numbers.formatCurrency(pedido.valorTotal)}"></span>
-                        </li>
-                    </ul>
-
-                    <div class="alert alert-warning">
-                        <strong>Atenção:</strong> Esta ação não poderá ser desfeita.
-                    </div>
-
-                    <form th:action="@{/pedidos/cancelar/{id}(id=${pedido.id})}" method="post">
-                        <div class="d-flex justify-content-end">
-                            <a th:href="@{/pedidos}" class="btn btn-outline-secondary me-2">Voltar</a>
-                            <button type="submit" class="btn btn-danger">Sim, Cancelar Pedido</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
+<div class="container mt-4">
+    <div class="alert alert-danger shadow-sm">
+        <h3 class="alert-heading"><i class="bi bi-exclamation-triangle"></i> Confirmação de Cancelamento</h3>
+        <p>Você está prestes a cancelar o pedido abaixo. Esta ação atualizará o status e <strong>devolverá os itens ao estoque</strong>.</p>
+        <hr>
+        <p class="mb-0">
+            <strong>ID do Pedido:</strong> <span th:text="${pedido.id}"></span><br>
+            <strong>Cliente:</strong> <span th:text="${pedido.cliente.nomeCompleto}"></span><br>
+            <strong>Valor Total:</strong> <span th:text="|R$ ${#numbers.formatDecimal(pedido.valorTotal, 1, 'POINT', 2, 'COMMA')}|"></span>
+        </p>
     </div>
+
+    <form th:action="@{/pedidos/cancelar/{id}(id=${pedido.id})}" method="post">
+        <button type="submit" class="btn btn-danger">
+            <i class="bi bi-trash"></i> Sim, cancelar pedido
+        </button>
+        <a th:href="@{/pedidos}" class="btn btn-secondary">Voltar</a>
+    </form>
 </div>
-<script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+
+<!-- Script do Bootstrap para o menu responsivo funcionar -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

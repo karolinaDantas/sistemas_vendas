@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Terminar Sessão</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+</head>
+<body class="bg-light d-flex align-items-center justify-content-center vh-100">
+    <div class="card shadow-sm p-4 text-center" style="width: 350px;">
+        <h4 class="mb-3">Deseja sair do sistema?</h4>
+        <form th:action="@{/logout}" method="post">
+            <button type="submit" class="btn btn-danger w-100 mb-2">Sim, sair</button>
+            <a th:href="@{/pedidos}" class="btn btn-secondary w-100">Cancelar</a>
+        </form>
+    </div>
+</body>
+</html>
