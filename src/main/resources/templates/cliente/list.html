@@ -5,35 +5,54 @@
     <meta charset="UTF-8">
     <title>Listagem de Clientes</title>
     <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 </head>
 <body>
 
-<!-- Barra de navegação com controlo visual de perfis (ADMIN / PADRAO) -->
+<!-- Barra de navegação com controlo visual de perfis -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
     <div class="container">
-        <a class="navbar-brand" th:href="@{/pedidos}">Sistema Vendas</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <a class="navbar-brand" th:href="@{/pedidos}">
+            Sistema Vendas
+        </a>
+
+        <button class="navbar-toggler" type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
         </button>
+
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav me-auto">
+
                 <!-- Apenas ADMIN gere clientes -->
-                <li class="nav-item" sec:authorize="hasRole('ADMIN')">
-                    <a class="nav-link active" th:href="@{/clientes}">Clientes</a>
+                <li class="nav-item"
+                    sec:authorize="hasRole('ADMIN')">
+                    <a class="nav-link active"
+                       th:href="@{/clientes}">Clientes</a>
                 </li>
+
                 <!-- Apenas ADMIN gere produtos -->
-                <li class="nav-item" sec:authorize="hasRole('ADMIN')">
-                    <a class="nav-link" th:href="@{/produtos}">Produtos</a>
+                <li class="nav-item"
+                    sec:authorize="hasRole('ADMIN')">
+                    <a class="nav-link"
+                       th:href="@{/produtos}">Produtos</a>
                 </li>
-                <!-- ADMIN e PADRAO gerem pedidos -->
-                <li class="nav-item" sec:authorize="hasAnyRole('ADMIN', 'PADRAO')">
-                    <a class="nav-link" th:href="@{/pedidos}">Pedidos</a>
+
+                <!-- ADMIN e PADRAO podem acessar pedidos -->
+                <li class="nav-item"
+                    sec:authorize="hasAnyRole('ADMIN', 'PADRAO')">
+                    <a class="nav-link"
+                       th:href="@{/pedidos}">Pedidos</a>
                 </li>
+
             </ul>
+
             <ul class="navbar-nav">
                 <li class="nav-item">
-                    <a class="nav-link text-danger fw-bold" th:href="@{/logout}">
+                    <a class="nav-link text-danger fw-bold"
+                       th:href="@{/logout}">
                         <i class="bi bi-box-arrow-right"></i> Sair
                     </a>
                 </li>
@@ -42,12 +61,22 @@
     </div>
 </nav>
 
+<!-- Conteúdo principal -->
 <div class="container mt-4">
-    <h1>Clientes</h1>
-    <a class="btn btn-primary mb-3" th:href="@{/clientes/novo}">Novo Cliente</a>
 
+    <h1>Clientes</h1>
+
+    <!-- Apenas ADMIN pode cadastrar clientes -->
+    <a sec:authorize="hasRole('ADMIN')"
+       class="btn btn-primary mb-3"
+       th:href="@{/clientes/novo}">
+        Novo Cliente
+    </a>
+
+    <!-- Tabela de clientes -->
     <table class="table table-bordered table-striped">
-        <thead class="thead-dark">
+
+        <thead class="table-dark">
         <tr>
             <th>Nome Completo</th>
             <th>E-mail</th>
@@ -57,21 +86,39 @@
             <th>Ações</th>
         </tr>
         </thead>
+
         <tbody>
         <tr th:each="cliente : ${clientes}">
+
             <td th:text="${cliente.nomeCompleto}"></td>
             <td th:text="${cliente.email}"></td>
             <td th:text="${cliente.cpf}"></td>
             <td th:text="${cliente.telefone}"></td>
             <td th:text="${cliente.cidade + '/' + cliente.uf}"></td>
+
             <td>
-                <a class="btn btn-sm btn-warning" th:href="@{/clientes/edit/{id}(id=${cliente.id})}">Editar</a>
-                <a class="btn btn-sm btn-danger" th:href="@{/clientes/delete/{id}(id=${cliente.id})}">Excluir</a>
+                <!-- Apenas ADMIN pode editar -->
+                <a sec:authorize="hasRole('ADMIN')"
+                   class="btn btn-sm btn-warning"
+                   th:href="@{/clientes/edit/{id}(id=${cliente.id})}">
+                    Editar
+                </a>
+
+                <!-- Apenas ADMIN pode excluir -->
+                <a sec:authorize="hasRole('ADMIN')"
+                   class="btn btn-sm btn-danger"
+                   th:href="@{/clientes/delete/{id}(id=${cliente.id})}">
+                    Excluir
+                </a>
             </td>
+
         </tr>
         </tbody>
+
     </table>
 </div>
+
 <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+
 </body>
 </html>
